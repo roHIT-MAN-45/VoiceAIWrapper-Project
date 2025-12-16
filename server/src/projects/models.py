@@ -3,6 +3,7 @@ from orgs.models import Organization
 
 
 class Project(models.Model):
+    """project model belonging to an organization"""
     STATUS_CHOICES = [
         ("ACTIVE", "Active"),
         ("COMPLETED", "Completed"),

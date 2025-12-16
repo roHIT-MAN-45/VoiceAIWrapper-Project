@@ -4,6 +4,7 @@ from tasks.models import Task, TaskComment
 
 
 class TaskCommentType(DjangoObjectType):
+    """graphql type for task comment"""
     class Meta:
         model = TaskComment
         fields = (
@@ -15,6 +16,7 @@ class TaskCommentType(DjangoObjectType):
 
 
 class TaskType(DjangoObjectType):
+    """graphql type for task"""
     class Meta:
         model = Task
         fields = (
@@ -30,6 +32,7 @@ class TaskType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
+    """task graphql queries"""
     tasks = graphene.List(
         TaskType,
         project_id=graphene.ID(required=True),
@@ -41,6 +44,7 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_tasks(self, info, project_id):
+        """resolve tasks for a project"""
         org = info.context.organization
         return Task.objects.filter(
             project_id=project_id,
@@ -48,6 +52,7 @@ class Query(graphene.ObjectType):
         )
 
     def resolve_task_comments(self, info, task_id):
+        """resolve comments for a task"""
         org = info.context.organization
         return TaskComment.objects.filter(
             task_id=task_id,

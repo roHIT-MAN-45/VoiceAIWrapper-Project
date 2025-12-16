@@ -2,6 +2,7 @@ from orgs.models import Organization
 
 
 class OrganizationMiddleware:
+    """middleware to extract organization from request headers"""
     def __init__(self, get_response):
         self.get_response = get_response
 

@@ -1,10 +1,9 @@
 from .base import *
+from corsheaders.defaults import default_headers
 
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-
-from corsheaders.defaults import default_headers
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

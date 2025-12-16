@@ -3,6 +3,7 @@ from projects.models import Project
 
 
 class Task(models.Model):
+    """task model belonging to a project"""
     STATUS_CHOICES = [
         ("TODO", "Todo"),
         ("IN_PROGRESS", "In Progress"),
@@ -29,6 +30,7 @@ class Task(models.Model):
 
 
 class TaskComment(models.Model):
+    """comment model for tasks"""
     task = models.ForeignKey(
         Task,
         on_delete=models.CASCADE,

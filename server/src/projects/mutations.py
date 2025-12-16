@@ -4,6 +4,7 @@ from projects.schema import ProjectType
 
 
 class CreateProject(graphene.Mutation):
+    """mutation to create a new project"""
     project = graphene.Field(ProjectType)
 
     class Arguments:
@@ -13,6 +14,7 @@ class CreateProject(graphene.Mutation):
         due_date = graphene.Date()
 
     def mutate(self, info, name, status, description="", due_date=None):
+        """create project for the current organization"""
         org = info.context.organization
         if not org:
             raise Exception("Organization required")
@@ -28,6 +30,9 @@ class CreateProject(graphene.Mutation):
 
 
 class UpdateProject(graphene.Mutation):
+    """mutation to update an existing project"""
+    project = graphene.Field(lambda: ProjectType)
+
     class Arguments:
         project_id = graphene.ID(required=True)
         name = graphene.String()
@@ -35,9 +40,8 @@ class UpdateProject(graphene.Mutation):
         status = graphene.String()
         due_date = graphene.Date()
 
-    project = graphene.Field(lambda: ProjectType)
-
     def mutate(self, info, project_id, **kwargs):
+        """update project fields"""
         org = info.context.organization
         project = Project.objects.get(
             id=project_id,
@@ -45,7 +49,8 @@ class UpdateProject(graphene.Mutation):
         )
 
         for key, value in kwargs.items():
-            setattr(project, key, value)
+            if value is not None:
+                setattr(project, key, value)
 
         project.save()
         return UpdateProject(project=project)

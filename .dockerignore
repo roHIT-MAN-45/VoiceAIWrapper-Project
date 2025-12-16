@@ -1,3 +1,4 @@
+node_modules
 __pycache__
 *.pyc
 *.pyo
@@ -5,9 +6,12 @@ __pycache__
 .Python
 venv/
 env/
-.env
 .venv
 *.db
 *.sqlite3
 .DS_Store
 *.log
+.git
+.gitignore
+README.md
+

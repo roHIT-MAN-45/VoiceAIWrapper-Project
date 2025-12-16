@@ -4,6 +4,7 @@ from projects.models import Project
 
 
 class ProjectType(DjangoObjectType):
+    """graphql type for project"""
     class Meta:
         model = Project
         fields = (
@@ -18,12 +19,14 @@ class ProjectType(DjangoObjectType):
 
 
 class ProjectStatsType(graphene.ObjectType):
+    """graphql type for project statistics"""
     total_tasks = graphene.Int()
     completed_tasks = graphene.Int()
     completion_rate = graphene.Float()
 
 
 class Query(graphene.ObjectType):
+    """project graphql queries"""
     projects = graphene.List(ProjectType)
     project_stats = graphene.Field(
         ProjectStatsType,
@@ -31,6 +34,7 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_projects(self, info):
+        """resolve all projects for the current organization"""
         org = info.context.organization
         if not org:
             raise Exception("X-ORG-SLUG header missing")
@@ -38,6 +42,7 @@ class Query(graphene.ObjectType):
         return Project.objects.filter(organization=org)
 
     def resolve_project_stats(self, info, project_id):
+        """resolve project statistics"""
         org = info.context.organization
 
         from tasks.models import Task

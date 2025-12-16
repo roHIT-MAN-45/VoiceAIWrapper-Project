@@ -1,43 +1,53 @@
 import { gql } from "@apollo/client";
 
+// fetch project list for sidebar
 export const GET_PROJECTS = gql`
-  query GetProjects {
+  query getProjects {
     projects {
       id
       name
-      description
       status
-      dueDate
     }
   }
 `;
 
-export const CREATE_PROJECT = gql`
-  mutation CreateProject(
-    $name: String!
-    $description: String
-    $status: String!
-    $dueDate: Date
-  ) {
-    createProject(
-      name: $name
-      description: $description
-      status: $status
-      dueDate: $dueDate
-    ) {
-      project {
+// fetch all projects with tasks
+export const GET_PROJECTS_WITH_TASKS = gql`
+  query getProjectsWithTasks {
+    projects {
+      id
+      name
+      status
+      tasks {
         id
-        name
-        status
+        title
         description
-        dueDate
+        status
       }
     }
   }
 `;
 
+// create new project
+export const CREATE_PROJECT = gql`
+  mutation createProject(
+    $name: String!
+    $description: String
+    $status: String!
+  ) {
+    createProject(name: $name, description: $description, status: $status) {
+      project {
+      id
+        name
+        status
+      }
+    }
+  }
+`;
+
+// update existing project
 export const UPDATE_PROJECT = gql`
-  mutation UpdateProject(
+  mutation updateProject(
     $projectId: ID!
     $name: String
     $description: String
@@ -50,9 +60,8 @@ export const UPDATE_PROJECT = gql`
       status: $status
     ) {
       project {
-        id
+      id
         name
-        description
         status
       }
     }

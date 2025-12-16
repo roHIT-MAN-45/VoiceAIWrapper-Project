@@ -5,6 +5,7 @@ from tasks.schema import TaskType, TaskCommentType
 
 
 class CreateTask(graphene.Mutation):
+    """mutation to create a new task"""
     task = graphene.Field(TaskType)
 
     class Arguments:
@@ -15,6 +16,7 @@ class CreateTask(graphene.Mutation):
         assignee_email = graphene.String()
 
     def mutate(self, info, project_id, title, status, description="", assignee_email=""):
+        """create task for a project"""
         org = info.context.organization
 
         project = Project.objects.get(
@@ -33,6 +35,7 @@ class CreateTask(graphene.Mutation):
 
 
 class UpdateTask(graphene.Mutation):
+    """mutation to update an existing task"""
     task = graphene.Field(TaskType)
 
     class Arguments:
@@ -43,6 +46,7 @@ class UpdateTask(graphene.Mutation):
         assignee_email = graphene.String()
 
     def mutate(self, info, task_id, **kwargs):
+        """update task fields"""
         org = info.context.organization
 
         task = Task.objects.get(
@@ -59,6 +63,7 @@ class UpdateTask(graphene.Mutation):
 
 
 class AddTaskComment(graphene.Mutation):
+    """mutation to add a comment to a task"""
     comment = graphene.Field(TaskCommentType)
 
     class Arguments:
@@ -67,6 +72,7 @@ class AddTaskComment(graphene.Mutation):
         author_email = graphene.String(required=True)
 
     def mutate(self, info, task_id, content, author_email):
+        """create comment for a task"""
         org = info.context.organization
 
         task = Task.objects.get(

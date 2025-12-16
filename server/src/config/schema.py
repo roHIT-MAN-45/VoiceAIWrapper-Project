@@ -8,10 +8,12 @@ from tasks.mutations import CreateTask, UpdateTask, AddTaskComment
 
 
 class Query(ProjectQuery, TaskQuery, graphene.ObjectType):
+    """root graphql query combining all app queries"""
     pass
 
 
 class Mutation(graphene.ObjectType):
+    """root graphql mutation combining all app mutations"""
     create_project = CreateProject.Field()
     update_project = UpdateProject.Field()
 

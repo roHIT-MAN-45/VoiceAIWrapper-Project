@@ -1,0 +1,46 @@
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+*.db
+*.sqlite3
+*.pyc
+.pytest_cache/
+*.pyo
+*.pyd
+
+# node
+node_modules/
+dist/
+.npm
+.pnpm-debug.log
+
+# environment
+.env
+.env.local
+.env.*.local
+
+# ide
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# os
+.DS_Store
+Thumbs.db
+
+# docker
+*.log
+
+# coverage
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache/
