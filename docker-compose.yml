@@ -1,82 +1,40 @@
-version: '3.8'
-
 services:
-  # postgresql database
-  db:
-    image: postgres:16-alpine
-    container_name: project_manager_db
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
     env_file:
       - ./server/.env
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - app-network
+    ports:
+      - "5432:5432"
 
-  # django backend
-  backend:
+  server:
     build:
       context: ./server
-      dockerfile: Dockerfile
-    container_name: project_manager_backend
+    container_name: server
+    restart: unless-stopped
     env_file:
       - ./server/.env
-    volumes:
-      - ./server/src:/app
-      - backend_static:/app/staticfiles
+    depends_on:
+      - postgres
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - SECRET_KEY=${SECRET_KEY:-django-insecure-dev-key-change-in-production}
-      - DEBUG=${DEBUG:-True}
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-network
+    command: python manage.py runserver 0.0.0.0:8000
 
-  # react frontend
-  frontend:
+  client:
     build:
       context: ./client
-      dockerfile: Dockerfile
-    container_name: project_manager_frontend
+    container_name: client
+    restart: unless-stopped
     env_file:
       - ./client/.env
-    volumes:
-      - ./client/src:/app/src
-      - ./client/public:/app/public
-      - /app/node_modules
+    depends_on:
+      - server
     ports:
       - "5173:5173"
-    environment:
-      - VITE_GRAPHQL_URI=http://localhost:8000/graphql/
-      - VITE_ORG_SLUG=${VITE_ORG_SLUG:-acme}
-    depends_on:
-      - backend
-    networks:
-      - app-network
+    command: npm run dev -- --host 0.0.0.0
 
 volumes:
   postgres_data:
-  backend_static:
-
-networks:
-  app-network:
-    driver: bridge
-

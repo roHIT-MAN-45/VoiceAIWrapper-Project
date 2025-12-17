@@ -1,13 +1,16 @@
+# base python image
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# python runtime settings
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
+# set working directory
 WORKDIR /app
 
-# system deps for psycopg
+# install system dependencies for psycopg
 RUN apt-get update \
-    && apt-get install -y gcc libpq-dev \
+    && apt-get install -y --no-install-recommends gcc libpq-dev netcat-openbsd postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,18 +19,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# copy source code
+# copy application source
 COPY src/ /app/
 
-# create entrypoint script
-RUN echo '#!/bin/bash\n\
-set -e\n\
-echo "Waiting for database..."\n\
-sleep 2\n\
-python manage.py migrate --noinput\n\
-echo "Migrations completed"\n\
-exec "$@"' > /entrypoint.sh \
-    && chmod +x /entrypoint.sh
+# copy init script
+COPY init.sh /init.sh
+RUN chmod +x /init.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# set entrypoint and default command
+ENTRYPOINT ["/init.sh"]
+CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8000"]
